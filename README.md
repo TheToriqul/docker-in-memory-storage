@@ -14,6 +14,20 @@ This project demonstrates my implementation of secure in-memory storage using Do
 The project implements a microservice-based approach using Docker containers with tmpfs mounts for secure in-memory storage. Here's the high-level architecture:
 
 ```mermaid
+%%{
+    init: {
+        'theme': 'base',
+        'themeVariables': {
+            'primaryColor': '#2B2B2B',
+            'primaryTextColor': '#fff',
+            'primaryBorderColor': '#7C7C7C',
+            'lineColor': '#B0B0B0',
+            'secondaryColor': '#383838',
+            'tertiaryColor': '#2B2B2B'
+        }
+    }
+}%%
+
 graph TD
     %% Node definitions with descriptive IDs
     CLIENT[Client Request]
@@ -37,13 +51,14 @@ graph TD
         PROCESS
     end
 
-    %% Class definitions for better dark/light mode compatibility
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px
-    classDef client fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
-    classDef container fill:#bbdefb,stroke:#1565c0,stroke-width:2px
-    classDef service fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
-    classDef storage fill:#ffcdd2,stroke:#c62828,stroke-width:2px
-    classDef process fill:#b3e5fc,stroke:#0277bd,stroke-width:2px
+    %% Class definitions optimized for dark mode
+    classDef default fill:#2B2B2B,stroke:#B0B0B0,stroke-width:2px,color:#fff
+    classDef client fill:#4A148C,stroke:#CE93D8,stroke-width:2px,color:#fff
+    classDef container fill:#0D47A1,stroke:#90CAF9,stroke-width:2px,color:#fff
+    classDef service fill:#1B5E20,stroke:#A5D6A7,stroke-width:2px,color:#fff
+    classDef storage fill:#B71C1C,stroke:#EF9A9A,stroke-width:2px,color:#fff
+    classDef process fill:#01579B,stroke:#81D4FA,stroke-width:2px,color:#fff
+    classDef notes fill:#424242,stroke:#757575,stroke-width:1px,color:#fff
 
     %% Apply classes to nodes
     class CLIENT client
@@ -52,12 +67,11 @@ graph TD
     class TMPFS storage
     class PROCESS process
 
-    %% Notes for additional context
+    %% Notes with dark mode optimization
     note1[Secure Data Flow]
     note2[Ephemeral Storage]
     
-    style note1 fill:#f8f8f8,stroke:#999,stroke-width:1px
-    style note2 fill:#f8f8f8,stroke:#999,stroke-width:1px
+    class note1,note2 notes
     
     DOCKER -.-> note1
     TMPFS -.-> note2
