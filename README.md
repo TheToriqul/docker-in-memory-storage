@@ -15,17 +15,52 @@ The project implements a microservice-based approach using Docker containers wit
 
 ```mermaid
 graph TD
-    A[Client Request] -->|API Call| B[Docker Container]
-    B --> C[Python Microservice]
-    C -->|Temporary Storage| D[tmpfs Mount]
-    D -->|In-Memory| E[Sensitive Data Processing]
-    E -->|Secure Response| A
+    %% Node definitions with descriptive IDs
+    CLIENT[Client Request]
+    DOCKER[Docker Container]
+    PYTHON[Python Microservice]
+    TMPFS[tmpfs Mount]
+    PROCESS[Data Processing]
+
+    %% Flow definitions with detailed labels
+    CLIENT -->|"1. API Call"| DOCKER
+    DOCKER -->|"2. Forward Request"| PYTHON
+    PYTHON -->|"3. Store Temporarily"| TMPFS
+    TMPFS -->|"4. Process In-Memory"| PROCESS
+    PROCESS -->|"5. Return Secure Response"| CLIENT
+
+    %% Subgraph for security boundary
+    subgraph Secure Environment
+        DOCKER
+        PYTHON
+        TMPFS
+        PROCESS
+    end
+
+    %% Class definitions for better dark/light mode compatibility
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px
+    classDef client fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
+    classDef container fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    classDef service fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef storage fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef process fill:#b3e5fc,stroke:#0277bd,stroke-width:2px
+
+    %% Apply classes to nodes
+    class CLIENT client
+    class DOCKER container
+    class PYTHON service
+    class TMPFS storage
+    class PROCESS process
+
+    %% Notes for additional context
+    note1[Secure Data Flow]
+    note2[Ephemeral Storage]
     
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#dfd,stroke:#333,stroke-width:2px
-    style D fill:#fdd,stroke:#333,stroke-width:2px
-    style E fill:#ddf,stroke:#333,stroke-width:2px
+    style note1 fill:#f8f8f8,stroke:#999,stroke-width:1px
+    style note2 fill:#f8f8f8,stroke:#999,stroke-width:1px
+    
+    DOCKER -.-> note1
+    TMPFS -.-> note2
 ```
 
 ## 💻 Technical Stack
