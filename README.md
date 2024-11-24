@@ -14,67 +14,25 @@ This project demonstrates my implementation of secure in-memory storage using Do
 The project implements a microservice-based approach using Docker containers with tmpfs mounts for secure in-memory storage. Here's the high-level architecture:
 
 ```mermaid
-%%{
-    init: {
-        'theme': 'base',
-        'themeVariables': {
-            'primaryColor': '#2B2B2B',
-            'primaryTextColor': '#fff',
-            'primaryBorderColor': '#7C7C7C',
-            'lineColor': '#B0B0B0',
-            'secondaryColor': '#383838',
-            'tertiaryColor': '#2B2B2B'
-        }
-    }
-}%%
+flowchart TD
+    Client([Client Request])
+    Docker[Docker Container]
+    Python[Python Service]
+    Storage[(tmpfs Storage)]
+    Process[Data Processing]
 
-graph TD
-    %% Node definitions with descriptive IDs
-    CLIENT[Client Request]
-    DOCKER[Docker Container]
-    PYTHON[Python Microservice]
-    TMPFS[tmpfs Mount]
-    PROCESS[Data Processing]
+    Client --> |API Call| Docker
+    Docker --> Python
+    Python --> Storage
+    Storage --> Process
+    Process --> Client
 
-    %% Flow definitions with detailed labels
-    CLIENT -->|"1. API Call"| DOCKER
-    DOCKER -->|"2. Forward Request"| PYTHON
-    PYTHON -->|"3. Store Temporarily"| TMPFS
-    TMPFS -->|"4. Process In-Memory"| PROCESS
-    PROCESS -->|"5. Return Secure Response"| CLIENT
-
-    %% Subgraph for security boundary
-    subgraph Secure Environment
-        DOCKER
-        PYTHON
-        TMPFS
-        PROCESS
+    subgraph Secure Zone
+        Docker
+        Python
+        Storage
+        Process
     end
-
-    %% Class definitions optimized for dark mode
-    classDef default fill:#2B2B2B,stroke:#B0B0B0,stroke-width:2px,color:#fff
-    classDef client fill:#4A148C,stroke:#CE93D8,stroke-width:2px,color:#fff
-    classDef container fill:#0D47A1,stroke:#90CAF9,stroke-width:2px,color:#fff
-    classDef service fill:#1B5E20,stroke:#A5D6A7,stroke-width:2px,color:#fff
-    classDef storage fill:#B71C1C,stroke:#EF9A9A,stroke-width:2px,color:#fff
-    classDef process fill:#01579B,stroke:#81D4FA,stroke-width:2px,color:#fff
-    classDef notes fill:#424242,stroke:#757575,stroke-width:1px,color:#fff
-
-    %% Apply classes to nodes
-    class CLIENT client
-    class DOCKER container
-    class PYTHON service
-    class TMPFS storage
-    class PROCESS process
-
-    %% Notes with dark mode optimization
-    note1[Secure Data Flow]
-    note2[Ephemeral Storage]
-    
-    class note1,note2 notes
-    
-    DOCKER -.-> note1
-    TMPFS -.-> note2
 ```
 
 ## 💻 Technical Stack
