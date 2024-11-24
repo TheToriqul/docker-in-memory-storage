@@ -20,19 +20,45 @@ flowchart TD
     Python[Python Service]
     Storage[(tmpfs Storage)]
     Process[Data Processing]
+    Cache[[Redis Cache]]
+    DB[(Database)]
+    Log[/Logging Service/]
+    Monitor{Health Monitor}
 
-    Client --> |API Call| Docker
-    Docker --> Python
-    Python --> Storage
-    Storage --> Process
-    Process --> Client
+    Client -->|1. API Request| Docker
+    Docker -->|2. Route Request| Python
+    Python -->|3. Store Data| Storage
+    Storage -->|4. Process| Process
+    Process -->|5. Response| Client
 
-    subgraph Secure Zone
+    Python -.->|Cache Check| Cache
+    Python -.->|Persist Data| DB
+    Python -.->|Log Events| Log
+    Monitor -.->|Health Check| Python
+    Monitor -.->|Status| Docker
+
+    subgraph Security Zone
+        direction TB
         Docker
         Python
         Storage
         Process
+        Cache
+        DB
+        Log
     end
+
+    classDef note fill:#fff,stroke:#333,stroke-width:1px
+    
+    note1[Secure Data Processing]
+    note2[In-Memory Operations]
+    note3[Auto-scaling Enabled]
+    
+    class note1,note2,note3 note
+    
+    Storage --- note2
+    Docker --- note3
+    Process --- note1
 ```
 
 ## 💻 Technical Stack
