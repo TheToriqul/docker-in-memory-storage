@@ -15,50 +15,64 @@ The project implements a microservice-based approach using Docker containers wit
 
 ```mermaid
 flowchart TD
-    Client([Client Request])
-    Docker[Docker Container]
-    Python[Python Service]
-    Storage[(tmpfs Storage)]
-    Process[Data Processing]
-    Cache[[Redis Cache]]
-    DB[(Database)]
-    Log[/Logging Service/]
-    Monitor{Health Monitor}
-
-    Client -->|1. API Request| Docker
-    Docker -->|2. Route Request| Python
-    Python -->|3. Store Data| Storage
-    Storage -->|4. Process| Process
-    Process -->|5. Response| Client
-
-    Python -.->|Cache Check| Cache
-    Python -.->|Persist Data| DB
-    Python -.->|Log Events| Log
-    Monitor -.->|Health Check| Python
-    Monitor -.->|Status| Docker
-
-    subgraph Security Zone
-        direction TB
-        Docker
-        Python
-        Storage
-        Process
-        Cache
-        DB
-        Log
+    subgraph External
+        Client([Client Request])
+        Auth[Authentication]
+        CDN[Content Delivery]
     end
 
-    classDef note fill:#fff,stroke:#333,stroke-width:1px
+    subgraph LoadBalancer
+        LB{Load Balancer}
+        SSL[SSL Termination]
+    end
+
+    subgraph Security Zone
+        subgraph Container
+            Docker[Docker Container]
+            Python[Python Service]
+            Storage[(tmpfs Storage)]
+            Process[Data Processing]
+            Cache[[Redis Cache]]
+            Queue[[Message Queue]]
+        end
+
+        subgraph Database
+            Primary[(Primary DB)]
+            Replica[(Replica DB)]
+        end
+
+        subgraph Monitoring
+            Log[/Logging Service/]
+            Metrics[/Metrics Collection/]
+            Alert{Alert Manager}
+        end
+    end
+
+    Client -->|HTTPS Request| CDN
+    CDN -->|Forward| LB
+    LB -->|Route| SSL
+    SSL -->|Decrypt| Auth
+    Auth -->|Verify| Docker
+
+    Docker -->|Route| Python
+    Python -->|Temporary| Storage
+    Storage -->|Process| Process
+    Process -->|Response| Client
+
+    Python <-->|Cache Data| Cache
+    Python -->|Queue Job| Queue
+    Queue -->|Background| Process
+    Python -->|Write| Primary
+    Primary -->|Replicate| Replica
     
-    note1[Secure Data Processing]
-    note2[In-Memory Operations]
-    note3[Auto-scaling Enabled]
-    
-    class note1,note2,note3 note
-    
-    Storage --- note2
-    Docker --- note3
-    Process --- note1
+    Docker -->|Container Logs| Log
+    Python -->|App Logs| Log
+    Process -->|Job Logs| Log
+    Log -->|Alert Rules| Alert
+    Docker -->|Health Data| Metrics
+    Python -->|Performance| Metrics
+    Metrics -->|Threshold| Alert
+    Alert -->|Notify| LB
 ```
 
 ## 💻 Technical Stack
